@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="News\" />
+    <Folder Include="Favorites\" />
+    <Folder Include="Asteroids\" />
+    <Folder Include="Asteroids\Queries\" />
+    <Folder Include="Asteroids\Responses\" />
+    <Folder Include="Configuration\" />
+    <Folder Include="Asteroids\Handlers\" />
+    <Folder Include="Utils\" />
+    <Folder Include="Asteroids\Subscribers\" />
+    <Folder Include="Asteroids\Events\" />
+    <Folder Include="Asteroids\Publishers\" />
+    <Folder Include="Asteroids\Commands\" />
+    <Folder Include="Asteroids\Crons\" />
+    <Folder Include="Asteroids\Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UniRockz.Repository\UniRockz.Repository.csproj" />
+    <ProjectReference Include="..\UniRockz.Messaging\UniRockz.Messaging.csproj" />
+    <ProjectReference Include="..\UniRockz.Threading\UniRockz.Threading.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="8.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.8" />
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="4.0.1" />
+  </ItemGroup>
+</Project>
