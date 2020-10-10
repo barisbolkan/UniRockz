@@ -55,10 +55,11 @@ namespace UniRockz.Asteroids.Api
             }
 
             app.UseHttpsRedirection();
-            app.UseThreadingMonitor();
             app.UseRouting();
 
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseThreadingMonitor();
 
             /*app.UseMvc(routes =>
             {

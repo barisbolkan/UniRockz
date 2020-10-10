@@ -8,11 +8,21 @@ using Hangfire.Mongo;
 using MongoDB.Driver;
 using Hangfire.Mongo.Migration.Strategies;
 using Hangfire.Mongo.Migration.Strategies.Backup;
+using System.Collections.Generic;
+using Hangfire.Dashboard;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace UniRockz.Threading.Extensions
 {
     public static class ThreadingServiceCollectionExtensions
     {
+        private const string HangfirePolicyName = "UniRockz-Asteroids-ThreadingPolicy";
+
         public static IServiceCollection AddThreading(this IServiceCollection services,
             IConfiguration configuration)
         {
@@ -38,6 +48,28 @@ namespace UniRockz.Threading.Extensions
                             CheckConnection = true
                         });
             });
+            
+            services
+                .AddAuthentication(AzureADDefaults.AuthenticationScheme)
+                .AddAzureAD(options => {
+                    configuration.Bind("AzureAD", options);
+                });
+            services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
+            {
+                options.Authority = options.Authority + "/v2.0/";        
+                options.TokenValidationParameters.ValidateIssuer = false;
+            });
+            // Add a new policy for hangfire
+            services.AddAuthorization(options =>
+            {
+                // Policy to be applied to hangfire endpoint
+                options.AddPolicy(HangfirePolicyName, builder =>
+                {
+                    builder
+                        .AddAuthenticationSchemes(AzureADDefaults.AuthenticationScheme)
+                        .RequireAuthenticatedUser();
+                });
+            });
             services.AddSingleton<IRecurringJobManager, RecurringJobManager>();
 
             return services;
@@ -50,12 +82,20 @@ namespace UniRockz.Threading.Extensions
 
         public static IApplicationBuilder UseThreadingMonitor(this IApplicationBuilder builder)
         {
-            builder.UseHangfireServer(
-                new BackgroundJobServerOptions
+            builder.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                WorkerCount = 5
+            });
+            builder.UseHangfireDashboard();
+            builder.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHangfireDashboard("/background", new DashboardOptions()
                 {
-                    WorkerCount = 5
+                    Authorization = new List<IDashboardAuthorizationFilter> { }
                 })
-                .UseHangfireDashboard("/background", new DashboardOptions());
+                .RequireAuthorization(HangfirePolicyName);
+            });
 
             return builder;
         }
