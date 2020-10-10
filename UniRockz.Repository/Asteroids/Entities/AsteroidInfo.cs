@@ -25,7 +25,7 @@ namespace UniRockz.Repository.Asteroids.Entities
         public string JplUrl { get; set; }
 
         [BsonElement(elementName: "absoluteMagnitude")]
-        public double AbsoluteMagnitude { get; set; }
+        public double? AbsoluteMagnitude { get; set; }
 
         [BsonElement(elementName: "estimatedDiameters")]
         public IEnumerable<Diameter> EstimatedDiameters { get; set; }

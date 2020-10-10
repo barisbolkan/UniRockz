@@ -151,7 +151,7 @@ namespace UniRockz.Domain.Asteroids.Handlers
                         {
                             return new AsteroidInfo(asteroidId.GetString(), neoRefId.GetString(), name.GetString())
                             {
-                                AbsoluteMagnitude = json.GetProperty<Double>("absolute_magnitude_h").Value,
+                                AbsoluteMagnitude = json.GetProperty<Double>("absolute_magnitude_h"),
                                 CloseApproachData = ParseApproachData(),
                                 EstimatedDiameters = ParseDiameter(),
                                 IsHazardous = json.GetProperty<Boolean>("is_potentially_hazardous_asteroid"),
